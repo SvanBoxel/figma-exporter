@@ -1,7 +1,5 @@
 # Figma Exporter
-[![NPM Version][npm-image]][npm-url]
-[![Linux Build][travis-image]][travis-url]
-[![Test Coverage][coveralls-image]][coveralls-url]
+< Build shields >
 
 > NodeJS library that helps with exporting Figma project. 
 
@@ -58,7 +56,7 @@ This outputs the following format:
 let images = await client.getNodeImageUrls('png')
 ```
 
-This output the following format:
+This outputs the following format:
 
 ```js
 [
@@ -78,13 +76,13 @@ This output the following format:
 ]
 ```
 
-5. Finally, write the images to a folder. The default folder for this is `./figma-export`.
+5. Finally, write the images and metadata (`data.json`) to a folder. The default folder for this is `./figma-export`.
 
 ```js
 let result = await client.writeImages('./data');
 ```
 
-This output the following format:
+This outputs the following format, which corresponds to the data that is written to `data.json`:
 
 ```js
 [
