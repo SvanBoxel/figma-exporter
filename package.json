@@ -1,0 +1,23 @@
+{
+  "name": "figma-exporter",
+  "version": "1.0.0",
+  "description": "NodeJS library that helps with exporting Figma project.",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsc:w": "tsc -w",
+    "prettier:format": "prettier --config .prettierrc 'src/**/*.ts' --write"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "figma-js": "^1.10.1",
+    "sanitize-filename": "1.6.3"
+  },
+  "devDependencies": {
+    "@types/node": "14.0.6",
+    "prettier": "^2.0.5",
+    "typescript": "^3.9.3"
+  }
+}
