@@ -115,12 +115,22 @@ var FigmaExporter = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, Promise.all(this.data.map(function (node) { return _this.writeSingleImage(node, dir); }))];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/, this.data];
-                }
+                return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+                        var _this = this;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, Promise.all(this.data.map(function (node) { return _this.writeSingleImage(node, dir); }))];
+                                case 1:
+                                    _a.sent();
+                                    fs.writeFile(dir + "/data.json", JSON.stringify(this.data), 'utf8', function (err) {
+                                        if (err)
+                                            reject(err);
+                                        resolve(_this.data);
+                                    });
+                                    return [2 /*return*/];
+                            }
+                        });
+                    }); })];
             });
         });
     };

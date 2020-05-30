@@ -81,8 +81,14 @@ class FigmaExporter {
   }
 
   public async writeImages(dir: string = defaultOutputFolder): Promise<figmaNodeT[]> {
-    await Promise.all(this.data.map((node) => this.writeSingleImage(node, dir)));
-    return this.data;
+    return new Promise(async (resolve, reject) => {
+      await Promise.all(this.data.map((node) => this.writeSingleImage(node, dir)));
+
+      fs.writeFile(`${dir}/data.json`, JSON.stringify(this.data), 'utf8', (err) => {
+        if (err) reject(err);
+        resolve(this.data)
+      })
+    });
   }
 
   private writeSingleImage(node: figmaNodeT, dir: string): Promise<figmaNodeT[]> {
@@ -95,7 +101,7 @@ class FigmaExporter {
         response.pipe(file);
         this.data.find(({ id }) => id === node.id).fileName = fileName;
         file.on('finish', () => resolve());
-        file.on('error', (err) => reject(err));
+        file.on('error', (err: any) => reject(err));
       });
     });
   }
