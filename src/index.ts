@@ -4,12 +4,6 @@ const fs = require('fs');
 const Figma = require('figma-js');
 const sanitize = require('sanitize-filename');
 
-declare namespace Figma {
-  interface Client {
-    user: import('figma-js').ClientInterface;
-  }
-}
-
 type figmaNodeT = {
   id: string;
   name: string;
