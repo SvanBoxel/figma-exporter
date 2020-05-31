@@ -1,6 +1,6 @@
 {
   "name": "figma-exporter",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "NodeJS library that helps with exporting images from your Figma project.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
