@@ -80,8 +80,8 @@ class FigmaExporter {
 
       fs.writeFile(`${dir}/data.json`, JSON.stringify(this.data), 'utf8', (err) => {
         if (err) reject(err);
-        resolve(this.data)
-      })
+        resolve(this.data);
+      });
     });
   }
 
@@ -91,7 +91,7 @@ class FigmaExporter {
 
     return new Promise((resolve, reject) => {
       const file = fs.createWriteStream(`${dir}/${fileName}`);
-      https.get(node.imageUrl, response => {
+      https.get(node.imageUrl, (response) => {
         response.pipe(file);
         this.data.find(({ id }) => id === node.id).fileName = fileName;
         file.on('finish', () => resolve());
