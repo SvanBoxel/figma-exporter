@@ -23,7 +23,7 @@ const defaultOutputFolder = './figma-export';
 class FigmaExporter {
   public key: string;
   public data: figmaNodeT[];
-  private client: import('figma-js').ClientInterface;
+  public client: import('figma-js').ClientInterface;
 
   constructor(token: string, key: string) {
     this.key = key;
@@ -91,7 +91,7 @@ class FigmaExporter {
 
     return new Promise((resolve, reject) => {
       const file = fs.createWriteStream(`${dir}/${fileName}`);
-      https.get(node.imageUrl, (response) => {
+      https.get(node.imageUrl, response => {
         response.pipe(file);
         this.data.find(({ id }) => id === node.id).fileName = fileName;
         file.on('finish', () => resolve());

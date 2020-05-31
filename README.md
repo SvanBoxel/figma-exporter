@@ -20,7 +20,7 @@ const FigmaExporter = require('figma-exportor')
 const client = new FigmaExporter("<your_figma_token>", "<file_id>");
 ```
 
-3. Then, declare the list of [Figma nodes](https://www.figma.com/plugin-docs/api/nodes/) in your project you want to export. The module accepts both node names and node ids. The example below will collect information about 6 Figma nodes:
+3. Then, declare the list of [Figma nodes](https://www.figma.com/plugin-docs/api/nodes/) in your project you want to export. The module accepts both node names and node ids and can handle `PAGE`, `CANVAS`, and `FRAME` types. The example below will collect information about 6 Figma nodes:
 
 ```js
 const filter = { 

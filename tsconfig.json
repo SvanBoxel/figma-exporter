@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
+      "rootDir": "src",
       "outDir": "./dist",
       "allowJs": true,
       "checkJs": true,
-      "target": "es5"
+      "target": "es5",
+      "declaration": true,
+      "module": "commonjs"
   },
-      "include": [
-      "./src/**/*"
-  ]
+  "include": ["./src/**/*"],
+  "exclude": ["./node_modules/**", "**/__tests__/*"]
 }
