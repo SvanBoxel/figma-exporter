@@ -12,7 +12,7 @@ npm i <name>
 ## Usage
 1. Before you get started, [generate a Figma access token](https://www.figma.com/developers/api#access-tokens). This will be used to authenticate with the Figma API and get access to the files you want to export. 
 
-2. You will also need your file id so the module now which to run the export on.
+2. You will also need your file id so the module knows which to run the export on.
 ![figma file id](https://user-images.githubusercontent.com/24505883/83338620-6e8a4080-a2c6-11ea-8891-38b0a1f0c981.png)
 
 ```js

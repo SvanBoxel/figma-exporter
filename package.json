@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"Todo: specify tests\" && exit 0",
     "build": "tsc",
     "build:watch": "tsc -w",
     "prepare" : "npm run build",
