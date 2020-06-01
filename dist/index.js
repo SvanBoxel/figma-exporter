@@ -70,8 +70,9 @@ var FigmaExporter = /** @class */ (function () {
                     case 1:
                         data = (_b.sent()).data;
                         reduceFn = function (arr, cur) {
+                            var _a, _b;
                             if (cur === void 0) { cur = filteredNodes; }
-                            var search = filter.name.includes(cur.name) || filter.id.includes(cur.id);
+                            var search = ((_a = filter.name) === null || _a === void 0 ? void 0 : _a.includes(cur.name)) || ((_b = filter.id) === null || _b === void 0 ? void 0 : _b.includes(cur.id));
                             if (search && validNodeTypes.includes(cur.type)) {
                                 arr.push({
                                     id: cur.id,

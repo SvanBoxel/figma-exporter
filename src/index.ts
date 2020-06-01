@@ -36,7 +36,7 @@ class FigmaExporter {
   public async collectNodes(filter: filterT = { name: [], id: [] }): Promise<figmaNodeT[]> {
     const { data } = await this.client.file(this.key);
     const reduceFn = (arr, cur = filteredNodes) => {
-      const search = filter.name.includes(cur.name) || filter.id.includes(cur.id);
+      const search = filter.name?.includes(cur.name) || filter.id?.includes(cur.id);
       if (search && validNodeTypes.includes(cur.type)) {
         arr.push({
           id: cur.id,
