@@ -65,6 +65,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -73,8 +80,6 @@ var https_1 = __importDefault(require("https"));
 var fs_1 = __importDefault(require("fs"));
 var Figma = __importStar(require("figma-js"));
 var sanitize_filename_1 = __importDefault(require("sanitize-filename"));
-;
-;
 var validNodeTypes = ['PAGE', 'CANVAS', 'FRAME'];
 var defaultOutputFolder = './figma-export';
 var FigmaExporter = /** @class */ (function () {
@@ -102,7 +107,8 @@ var FigmaExporter = /** @class */ (function () {
                             if (search && validNodeTypes.includes(cur.type)) {
                                 arr.push({
                                     id: cur.id,
-                                    name: cur.name
+                                    name: cur.name,
+                                    images: []
                                 });
                             }
                             if (cur.children && cur.children.length) {
@@ -136,7 +142,12 @@ var FigmaExporter = /** @class */ (function () {
                             })];
                     case 1:
                         data = (_a.sent()).data;
-                        return [2 /*return*/, (this.data = this.data.map(function (node) { return (__assign(__assign({}, node), { imageUrl: data.images[node.id], imageFormat: format })); }))];
+                        return [2 /*return*/, (this.data = this.data.map(function (node) { return (__assign(__assign({}, node), { images: __spreadArrays(node.images, [
+                                    {
+                                        url: data.images[node.id],
+                                        imageFormat: format
+                                    }
+                                ]) })); }))];
                 }
             });
         });
@@ -144,13 +155,20 @@ var FigmaExporter = /** @class */ (function () {
     FigmaExporter.prototype.writeImages = function (dir) {
         if (dir === void 0) { dir = defaultOutputFolder; }
         return __awaiter(this, void 0, void 0, function () {
+            var requests;
             var _this = this;
             return __generator(this, function (_a) {
+                requests = this.data.reduce(function (arr, cur) {
+                    cur.images.forEach(function (image) {
+                        arr.push(_this.writeSingleImage(image, cur, dir));
+                    });
+                    return arr;
+                }, []);
                 return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
                         var _this = this;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
-                                case 0: return [4 /*yield*/, Promise.all(this.data.map(function (node) { return _this.writeSingleImage(node, dir); }))];
+                                case 0: return [4 /*yield*/, Promise.all(requests)];
                                 case 1:
                                     _a.sent();
                                     fs_1.default.writeFile(dir + "/data.json", JSON.stringify(this.data), 'utf8', function (err) {
@@ -165,17 +183,20 @@ var FigmaExporter = /** @class */ (function () {
             });
         });
     };
-    FigmaExporter.prototype.writeSingleImage = function (node, dir) {
+    FigmaExporter.prototype.writeSingleImage = function (image, node, dir) {
         var _this = this;
         !fs_1.default.existsSync(dir) && fs_1.default.mkdirSync(dir);
-        var fileName = sanitize_filename_1.default(node.name) + "." + node.imageFormat;
+        var fileName = sanitize_filename_1.default(node.name) + "." + image.imageFormat;
         return new Promise(function (resolve, reject) {
             var file = fs_1.default.createWriteStream(dir + "/" + fileName);
-            https_1.default.get(node.imageUrl, function (response) {
+            https_1.default.get(image.url, function (response) {
                 response.pipe(file);
                 _this.data.find(function (_a) {
                     var id = _a.id;
                     return id === node.id;
+                }).images.find(function (_a) {
+                    var url = _a.url;
+                    return url === image.url;
                 }).fileName = fileName;
                 file.on('finish', function () { return resolve(); });
                 file.on('error', function (err) { return reject(err); });

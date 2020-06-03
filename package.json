@@ -4,7 +4,6 @@
   "description": "NodeJS library that helps with exporting images from your Figma project.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "type": "module",
   "scripts": {
     "test": "echo \"Todo: specify tests\" && exit 0",
     "build": "tsc",

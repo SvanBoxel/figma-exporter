@@ -3,16 +3,20 @@ import fs from 'fs';
 
 import * as Figma from 'figma-js';
 import sanitize from 'sanitize-filename';
+import { request } from 'http';
 
+export interface FigmaImage {
+  url: string;
+  imageFormat?: string;
+  fileName?: string;
+}
 /**
  * Node returned by Figma.
  */
 export interface FigmaNode {
   id: string;
   name: string;
-  imageUrl?: string;
-  imageFormat?: string;
-  fileName?: string;
+  images?: FigmaImage[];
 }
 
 /**
@@ -54,7 +58,8 @@ class FigmaExporter {
       if (search && validNodeTypes.includes(cur.type)) {
         arr.push({
           id: cur.id,
-          name: cur.name
+          name: cur.name,
+          images: []
         });
       }
 
@@ -88,14 +93,26 @@ class FigmaExporter {
 
     return (this.data = this.data.map((node) => ({
       ...node,
-      imageUrl: data.images[node.id],
-      imageFormat: format
+      images: [
+        ...node.images,
+        {
+          url: data.images[node.id],
+          imageFormat: format
+        }
+      ]
     })));
   }
 
   public async writeImages(dir: string = defaultOutputFolder): Promise<FigmaNode[]> {
+    const requests = this.data.reduce((arr, cur: FigmaNode) => {
+      cur.images.forEach((image) => {
+        arr.push(this.writeSingleImage(image, cur, dir));
+      });
+      return arr;
+    }, []);
+
     return new Promise(async (resolve, reject) => {
-      await Promise.all(this.data.map((node) => this.writeSingleImage(node, dir)));
+      await Promise.all(requests);
 
       fs.writeFile(`${dir}/data.json`, JSON.stringify(this.data), 'utf8', (err) => {
         if (err) reject(err);
@@ -104,15 +121,15 @@ class FigmaExporter {
     });
   }
 
-  private writeSingleImage(node: FigmaNode, dir: string): Promise<FigmaNode[]> {
+  private writeSingleImage(image: FigmaImage, node: FigmaNode, dir: string): Promise<FigmaNode[]> {
     !fs.existsSync(dir) && fs.mkdirSync(dir);
-    const fileName = `${sanitize(node.name)}.${node.imageFormat}`;
+    const fileName = `${sanitize(node.name)}.${image.imageFormat}`;
 
     return new Promise((resolve, reject) => {
       const file = fs.createWriteStream(`${dir}/${fileName}`);
-      https.get(node.imageUrl, (response) => {
+      https.get(image.url, (response) => {
         response.pipe(file);
-        this.data.find(({ id }) => id === node.id).fileName = fileName;
+        this.data.find(({ id }) => id === node.id).images.find(({ url }) => url === image.url).fileName = fileName;
         file.on('finish', () => resolve());
         file.on('error', (err: any) => reject(err));
       });

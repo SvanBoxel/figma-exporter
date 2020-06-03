@@ -1,24 +1,27 @@
+export interface FigmaImage {
+    url: string;
+    imageFormat?: string;
+    fileName?: string;
+}
 /**
  * Node returned by Figma.
  */
 export interface FigmaNode {
     id: string;
     name: string;
-    imageUrl?: string;
-    imageFormat?: string;
-    fileName?: string;
+    images?: FigmaImage[];
 }
 /**
  * List of nodes that you care about in the document.
  */
 export interface FilterOptions {
     /**
-    * Names of nodes to filter
-    */
+     * Names of nodes to filter
+     */
     readonly name?: string[];
     /**
-    * IDs of nodes to filter
-    */
+     * IDs of nodes to filter
+     */
     readonly id?: string[];
 }
 export declare type exportFormatOptions = import('figma-js').exportFormatOptions;
