@@ -1,3 +1,4 @@
+"use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -8,6 +9,25 @@ var __assign = (this && this.__assign) || function () {
         return t;
     };
     return __assign.apply(this, arguments);
+};
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
 };
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -45,10 +65,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var https = require('https');
-var fs = require('fs');
-var Figma = require('figma-js');
-var sanitize = require('sanitize-filename');
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var https_1 = __importDefault(require("https"));
+var fs_1 = __importDefault(require("fs"));
+var Figma = __importStar(require("figma-js"));
+var sanitize_filename_1 = __importDefault(require("sanitize-filename"));
+;
+;
 var validNodeTypes = ['PAGE', 'CANVAS', 'FRAME'];
 var defaultOutputFolder = './figma-export';
 var FigmaExporter = /** @class */ (function () {
@@ -91,6 +117,10 @@ var FigmaExporter = /** @class */ (function () {
             });
         });
     };
+    FigmaExporter.prototype.clearNodes = function () {
+        this.data = [];
+        return this.data;
+    };
     FigmaExporter.prototype.getNodeImageUrls = function (format) {
         return __awaiter(this, void 0, void 0, function () {
             var data;
@@ -123,7 +153,7 @@ var FigmaExporter = /** @class */ (function () {
                                 case 0: return [4 /*yield*/, Promise.all(this.data.map(function (node) { return _this.writeSingleImage(node, dir); }))];
                                 case 1:
                                     _a.sent();
-                                    fs.writeFile(dir + "/data.json", JSON.stringify(this.data), 'utf8', function (err) {
+                                    fs_1.default.writeFile(dir + "/data.json", JSON.stringify(this.data), 'utf8', function (err) {
                                         if (err)
                                             reject(err);
                                         resolve(_this.data);
@@ -137,11 +167,11 @@ var FigmaExporter = /** @class */ (function () {
     };
     FigmaExporter.prototype.writeSingleImage = function (node, dir) {
         var _this = this;
-        !fs.existsSync(dir) && fs.mkdirSync(dir);
-        var fileName = sanitize(node.name) + "." + node.imageFormat;
+        !fs_1.default.existsSync(dir) && fs_1.default.mkdirSync(dir);
+        var fileName = sanitize_filename_1.default(node.name) + "." + node.imageFormat;
         return new Promise(function (resolve, reject) {
-            var file = fs.createWriteStream(dir + "/" + fileName);
-            https.get(node.imageUrl, function (response) {
+            var file = fs_1.default.createWriteStream(dir + "/" + fileName);
+            https_1.default.get(node.imageUrl, function (response) {
                 response.pipe(file);
                 _this.data.find(function (_a) {
                     var id = _a.id;
@@ -154,4 +184,4 @@ var FigmaExporter = /** @class */ (function () {
     };
     return FigmaExporter;
 }());
-module.exports = FigmaExporter;
+exports.default = FigmaExporter;

@@ -1,28 +1,42 @@
-const https = require('https');
-const fs = require('fs');
+import https from 'https';
+import fs from 'fs';
 
-const Figma = require('figma-js');
-const sanitize = require('sanitize-filename');
+import * as Figma from 'figma-js';
+import sanitize from 'sanitize-filename';
 
-type figmaNodeT = {
+/**
+ * Node returned by Figma.
+ */
+export interface FigmaNode {
   id: string;
   name: string;
   imageUrl?: string;
   imageFormat?: string;
   fileName?: string;
-};
+}
 
-type filterT = {
-  name: string[];
-  id: string[];
-};
+/**
+ * List of nodes that you care about in the document.
+ */
+export interface FilterOptions {
+  /**
+   * Names of nodes to filter
+   */
+  readonly name?: string[];
+  /**
+   * IDs of nodes to filter
+   */
+  readonly id?: string[];
+}
+
+export declare type exportFormatOptions = import('figma-js').exportFormatOptions;
 
 const validNodeTypes = ['PAGE', 'CANVAS', 'FRAME'];
 const defaultOutputFolder = './figma-export';
 
 class FigmaExporter {
   public key: string;
-  public data: figmaNodeT[];
+  public data: FigmaNode[];
   public client: import('figma-js').ClientInterface;
 
   constructor(token: string, key: string) {
@@ -33,7 +47,7 @@ class FigmaExporter {
     });
   }
 
-  public async collectNodes(filter: filterT = { name: [], id: [] }): Promise<figmaNodeT[]> {
+  public async collectNodes(filter: Partial<FilterOptions> = { name: [], id: [] }): Promise<FigmaNode[]> {
     const { data } = await this.client.file(this.key);
     const reduceFn = (arr, cur = filteredNodes) => {
       const search = filter.name?.includes(cur.name) || filter.id?.includes(cur.id);
@@ -57,7 +71,12 @@ class FigmaExporter {
     return this.data;
   }
 
-  public async getNodeImageUrls(format: import('figma-js').exportFormatOptions): Promise<figmaNodeT[]> {
+  public clearNodes(): FigmaNode[] {
+    this.data = [];
+    return this.data;
+  }
+
+  public async getNodeImageUrls(format: exportFormatOptions): Promise<FigmaNode[]> {
     if (!this.data.length) {
       return this.data;
     }
@@ -74,7 +93,7 @@ class FigmaExporter {
     })));
   }
 
-  public async writeImages(dir: string = defaultOutputFolder): Promise<figmaNodeT[]> {
+  public async writeImages(dir: string = defaultOutputFolder): Promise<FigmaNode[]> {
     return new Promise(async (resolve, reject) => {
       await Promise.all(this.data.map((node) => this.writeSingleImage(node, dir)));
 
@@ -85,7 +104,7 @@ class FigmaExporter {
     });
   }
 
-  private writeSingleImage(node: figmaNodeT, dir: string): Promise<figmaNodeT[]> {
+  private writeSingleImage(node: FigmaNode, dir: string): Promise<FigmaNode[]> {
     !fs.existsSync(dir) && fs.mkdirSync(dir);
     const fileName = `${sanitize(node.name)}.${node.imageFormat}`;
 
@@ -101,4 +120,4 @@ class FigmaExporter {
   }
 }
 
-module.exports = FigmaExporter;
+export default FigmaExporter;

@@ -1,27 +1,36 @@
-declare const https: any;
-declare const fs: any;
-declare const Figma: any;
-declare const sanitize: any;
-declare type figmaNodeT = {
+/**
+ * Node returned by Figma.
+ */
+export interface FigmaNode {
     id: string;
     name: string;
     imageUrl?: string;
     imageFormat?: string;
     fileName?: string;
-};
-declare type filterT = {
-    name: string[];
-    id: string[];
-};
-declare const validNodeTypes: string[];
-declare const defaultOutputFolder = "./figma-export";
+}
+/**
+ * List of nodes that you care about in the document.
+ */
+export interface FilterOptions {
+    /**
+    * Names of nodes to filter
+    */
+    readonly name?: string[];
+    /**
+    * IDs of nodes to filter
+    */
+    readonly id?: string[];
+}
+export declare type exportFormatOptions = import('figma-js').exportFormatOptions;
 declare class FigmaExporter {
     key: string;
-    data: figmaNodeT[];
+    data: FigmaNode[];
     client: import('figma-js').ClientInterface;
     constructor(token: string, key: string);
-    collectNodes(filter?: filterT): Promise<figmaNodeT[]>;
-    getNodeImageUrls(format: import('figma-js').exportFormatOptions): Promise<figmaNodeT[]>;
-    writeImages(dir?: string): Promise<figmaNodeT[]>;
+    collectNodes(filter?: Partial<FilterOptions>): Promise<FigmaNode[]>;
+    clearNodes(): FigmaNode[];
+    getNodeImageUrls(format: exportFormatOptions): Promise<FigmaNode[]>;
+    writeImages(dir?: string): Promise<FigmaNode[]>;
     private writeSingleImage;
 }
+export default FigmaExporter;
