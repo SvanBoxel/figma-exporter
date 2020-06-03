@@ -1,12 +1,13 @@
 # Figma Exporter
-< Build shields >
+![GitHub Actions Shield](https://github.com/SvanBoxel/figma-exporter/workflows/Build,%20lint,%20and%20test/badge.svg)
+[![npm version](http://img.shields.io/npm/v/figma-exporter.svg?style=flat)](https://www.npmjs.com/package/figma-exporter "View this project on npm")
 
 > NodeJS library that helps with exporting Figma project. 
 
 ## Install
 
 ```bash
-npm i <name>
+npm i figma-exporter
 ```
 
 ## Usage
@@ -16,7 +17,7 @@ npm i <name>
 ![figma file id](https://user-images.githubusercontent.com/24505883/83338620-6e8a4080-a2c6-11ea-8891-38b0a1f0c981.png)
 
 ```js
-const FigmaExporter = require('figma-exportor')
+const FigmaExporter = require('figma-exportor').default;
 const client = new FigmaExporter("<your_figma_token>", "<file_id>");
 ```
 
@@ -43,9 +44,9 @@ let nodes = await client.collectNodes(filter)
 This outputs the following format: 
 ```js
 [
-  { id: '1:419', name: 'Onboarding' },
-  { id: '31:7299', name: 'Footer' },
-  { id: '1:24', name: 'Header' },
+  { id: '1:419', name: 'Onboarding', images: [] },
+  { id: '31:7299', name: 'Footer', images: [] },
+  { id: '1:24', name: 'Header', images: [] },
   ...
 ]
 ```
@@ -63,14 +64,18 @@ This outputs the following format:
   {
     id: '1:419',
     name: 'Onboarding',
-    imageUrl: '<url>',
-    imageFormat: 'png'
+    images: [{
+      imageUrl: '<url>',
+      imageFormat: 'png'
+    }]
   },
   {
     id: '31:7299',
     name: 'Footer',
-    imageUrl: '<url>',
-    imageFormat: 'png'
+    images: [{
+      imageUrl: '<url>',
+      imageFormat: 'png'
+    }]
   },
   ...
 ]
@@ -89,23 +94,27 @@ This outputs the following format, which corresponds to the data that is written
   {
     id: '1:419',
     name: 'Onboarding',
-    imageUrl: '<url>',
-    imageFormat: 'png',
-    fileName: 'Onboarding.png'
+    images: [{
+      imageUrl: '<url>',
+      imageFormat: 'png',
+      fileName: 'Onboarding.png'
+    }]
   },
   {
     id: '31:7299',
     name: 'Footer',
-    imageUrl: '<url>',
-    imageFormat: 'png',
-    fileName: 'Footer.png'
+    images: [{
+      imageUrl: '<url>',
+      imageFormat: 'png',
+      fileName: 'Footer.png'
+    }]
   },
   ...
 ```
 
-Full example that export `Splashscreen` and `Contact`:
+Full example that export `Splashscreen` and `Contact` to both svg and pdf:
 ```js
-const FigmaExporter = require('figma-exportor')
+const FigmaExporter = require('figma-exportor').default
 const client = new FigmaExporter("<your_figma_token>", "<file_id>");
 const filter = { 
     name: [
@@ -115,6 +124,7 @@ const filter = {
 }
 const nodes = await client.collectNodes(filter);
 const nodesWithImages = await client.getNodeImageUrls('svg');
+const nodesWithImages = await client.getNodeImageUrls('pdf');
 const result = await client.writeImages();
 
 ```
